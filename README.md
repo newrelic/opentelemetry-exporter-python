@@ -1,38 +1,131 @@
 [![Community Project header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Community_Project.png)](https://opensource.newrelic.com/oss-category/#community-project)
 
-# [Name of Project] [build badges go here when available]
+# New Relic OpenTelemetry Python Exporter
 
->[Brief description - what is the project and value does it provide? How often should users expect to get releases? How is versioning set up? Where does this project want to go?]
+An [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-python) exporter for sending spans
+to New Relic using the New Relic Python Telemetry SDK. Currently, spans as of OpenTelemetry v0.15b0 are supported. For details on how OpenTelemetry data is mapped to New Relic data, see documentation in
+[our exporter specifications documentation](https://github.com/newrelic/newrelic-exporter-specs).
 
 ## Installation
 
-> [Include a step-by-step procedure on how to get your code installed. Be sure to include any third-party dependencies that need to be installed separately]
+To start, the ``opentelemetry-ext-newrelic`` package must be installed. To install
+through pip:
 
+```python
+    $ pip install opentelemetry-ext-newrelic
+```
+   If that fails, download the library from its GitHub page and install it using:
+
+```python
+    $ python setup.py install
+```
 ## Getting Started
->[Simple steps to start working with the software similar to a "Hello World"]
+In order to use the exporter, you will need to set the ``NEW_RELIC_INSERT_KEY`` environment variable with your [Insights Insert API Key](https://docs.newrelic.com/docs/insights/insights-data-sources/custom-data/introduction-event-api#).
 
 ## Usage
->[**Optional** - Include more thorough instructions on how to use the software. This section might not be needed if the Getting Started section is enough. Remove this section if it's not needed.]
+>Using the span exporter
 
+The following code sample assumes you have set the ``NEW_RELIC_INSERT_KEY`` environment variable and installed the following packages:
 
-## Building
+* ``opentelemetry-ext-newrelic``
 
->[**Optional** - Include this section if users will need to follow specific instructions to build the software from source. Be sure to include any third party build dependencies that need to be installed separately. Remove this section if it's not needed.]
+```python
+import os
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+from opentelemetry_ext_newrelic import NewRelicSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
 
-## Testing
+trace.set_tracer_provider(
+    TracerProvider(resource=Resource.create({"service.name": "otel-python"}))
+)
 
->[**Optional** - Include instructions on how to run tests if we include tests with the codebase. Remove this section if it's not needed.]
+trace.get_tracer_provider().add_span_processor(
+    BatchExportSpanProcessor(
+        NewRelicSpanExporter(
+            os.environ["NEW_RELIC_INSERT_KEY"], 
+        ),
+        schedule_delay_millis=500,
+    )
+)
+
+tracer = trace.get_tracer(__name__)
+with tracer.start_as_current_span("foo"):
+    with tracer.start_as_current_span("bar"):
+        print("Hello World from OpenTelemetry Python!")
+```
+>Using the span exporter with auto-instrumentation:
+
+The following code sample assumes you have set the ``NEW_RELIC_INSERT_KEY`` environment variable and installed the following packages:
+
+* ``opentelemetry-ext-newrelic``
+* ``opentelemetry-instrumentation-flask``
+* ``flask``
+
+```python
+import os
+from opentelemetry import trace
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+from opentelemetry_ext_newrelic import NewRelicSpanExporter
+from flask import Flask
+app = Flask(__name__)
+FlaskInstrumentor().instrument_app(app)
+trace.set_tracer_provider(
+    TracerProvider(resource=Resource.create({"service.name": "otel-python-flask"}))
+)
+
+trace.get_tracer_provider().add_span_processor(
+    BatchExportSpanProcessor(
+        NewRelicSpanExporter(os.environ["NEW_RELIC_INSERT_KEY"]),
+        schedule_delay_millis=500,
+    )
+)
+
+@app.route("/")
+def hello_world():
+    return "Hello World!"
+
+@app.route("/error")
+def raise_500():
+    raise RuntimeError("Something happened!")
+
+if __name__ == "__main__":
+    app.run(port=8080)
+```
+## Find and use your data
+
+For tips on how to find and query your data in New Relic, see [Find trace/span data](https://docs.newrelic.com/docs/understand-dependencies/distributed-tracing/trace-api/introduction-trace-api#view-data).
+
+For general querying information, see:
+- [Query New Relic data](https://docs.newrelic.com/docs/using-new-relic/data/understand-data/query-new-relic-data)
+- [Intro to NRQL](https://docs.newrelic.com/docs/query-data/nrql-new-relic-query-language/getting-started/introduction-nrql)
 
 ## Support
-
 New Relic hosts and moderates an online forum where customers can interact with New Relic employees as well as other customers to get help and share best practices. Like all official New Relic open source projects, there's a related Community topic in the New Relic Explorers Hub. You can find this project's topic/threads here:
 
->Add the url for the support thread here
+**Support Channels**
+
+* [New Relic Documentation](https://docs.newrelic.com/docs/integrations/open-source-telemetry-integrations/open-source-telemetry-integration-list/new-relics-opentelemetry-integration): Comprehensive guidance for using our platform
+* [New Relic Community](https://discuss.newrelic.com/tags/pythonagent): The best place to engage in troubleshooting questions
+* [New Relic Developer](https://developer.newrelic.com/): Resources for building a custom observability applications
+* [New Relic University](https://learn.newrelic.com/): A range of online training for New Relic users of every level
+
+
 
 ## Contributing
-We encourage your contributions to improve [project name]! Keep in mind when you submit your pull request, you'll need to sign the CLA via the click-through using CLA-Assistant. You only have to sign the CLA one time per project.
+We encourage your contributions to improve opentelemetry-exporter-python! Keep in mind when you submit your pull request, you'll need to sign the CLA via the click-through using CLA-Assistant. You only have to sign the CLA one time per project.
 If you have any questions, or to execute our corporate CLA, required if your contribution is on behalf of a company,  please drop us an email at opensource@newrelic.com.
 
+
 ## License
-[Project Name] is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
->[If applicable: The [project name] also uses source code from third-party libraries. You can find full details on which libraries are used and the terms under which they are licensed in the third-party notices document.]
+opentelemetry-exporter-python is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
+
+## Limitations
+
+The New Relic Telemetry APIs are rate limited. Please reference the
+documentation for [New Relic Trace API requirements and limits](https://docs.newrelic.com/docs/apm/distributed-tracing/trace-api/trace-api-general-requirements-limits)
+on the specifics of the rate limits.
