@@ -1,6 +1,6 @@
-import setuptools
+from setuptools import setup
 
-setuptools.setup(
+setup(
     name="opentelemetry-ext-newrelic",
     use_scm_version={
         "write_to": "src/opentelemetry_ext_newrelic/version.py",
