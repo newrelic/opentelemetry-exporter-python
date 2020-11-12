@@ -20,7 +20,7 @@ import pytest
 from newrelic_telemetry_sdk import SpanClient
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import Span, SpanContext
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor, SpanExportResult
+from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.trace import SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
