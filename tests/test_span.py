@@ -120,9 +120,9 @@ SPAN_DATA = {
 PARENT_SPAN = MockSpan(**PARENT_SPAN_DATA)
 SPAN = MockSpan(**SPAN_DATA, parent=PARENT_SPAN.context)
 
-WEIRD_SPAN_DATA = PARENT_SPAN_DATA.copy()
-WEIRD_SPAN_DATA["status_description"] = None
-WEIRD_SPAN = MockSpan(**WEIRD_SPAN_DATA)
+MISSING_DESC_SPAN_DATA = PARENT_SPAN_DATA.copy()
+MISSING_DESC_SPAN_DATA["status_description"] = None
+MISSING_DESC_SPAN = MockSpan(**MISSING_DESC_SPAN_DATA)
 
 
 def test_spans(http_responses, span_exporter, decompress_payload):
@@ -194,7 +194,7 @@ def test_exception_spans_no_description(
     http_responses, span_exporter, decompress_payload
 ):
     assert len(http_responses) == 0
-    exporter_status_code = span_exporter.export([WEIRD_SPAN])
+    exporter_status_code = span_exporter.export([MISSING_DESC_SPAN])
     assert exporter_status_code == SpanExportResult.SUCCESS
     assert len(http_responses) == 1
     response = http_responses.pop()
@@ -208,13 +208,13 @@ def test_exception_spans_no_description(
     span = spans[0]
     attributes = span["attributes"]
 
-    assert int(span["id"], 16) == WEIRD_SPAN_DATA["context"]["span_id"]
-    assert attributes["name"] == WEIRD_SPAN.name
+    assert int(span["id"], 16) == MISSING_DESC_SPAN_DATA["context"]["span_id"]
+    assert attributes["name"] == MISSING_DESC_SPAN.name
 
-    for name, value in WEIRD_SPAN.attributes.items():
+    for name, value in MISSING_DESC_SPAN.attributes.items():
         assert attributes[name] == value
 
-    assert attributes["otel.status_code"] == WEIRD_SPAN_DATA["status_code"].name
+    assert attributes["otel.status_code"] == MISSING_DESC_SPAN_DATA["status_code"].name
     assert "otel.status_description" not in attributes
 
 
