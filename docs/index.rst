@@ -1,5 +1,5 @@
 New Relic OpenTelemetry Exporter
-==============================
+================================
 
 This library provides Python `OpenTelemetry`_ exporter class. This class can be
 used to send span data to New Relic from `OpenTelemetry`_.

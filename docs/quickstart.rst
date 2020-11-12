@@ -2,7 +2,7 @@ Quickstart
 ==========
 
 Installing opentelemetry-ext-newrelic
-----------------------------------
+-------------------------------------
 
 To start, the ``opentelemetry-ext-newrelic`` package must be installed. To install
 through pip:
@@ -19,7 +19,7 @@ If that fails, download the library from its GitHub page and install it using:
 
 
 Using the span exporter
-------------------------
+-----------------------
 
 To start, the following packages must be installed.
 
@@ -57,7 +57,7 @@ Additionally, the example code assumes you've set the following environment vari
             print("Hello World from OpenTelemetry Python!")
 
 Using the span exporter with auto-instrumentation
-------------------------
+-------------------------------------------------
 
 To start, the following packages must be installed.
 
