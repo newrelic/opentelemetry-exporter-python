@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: "pypi"
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "pip"
+    directory: "/"
     schedule:
       interval: "daily"
