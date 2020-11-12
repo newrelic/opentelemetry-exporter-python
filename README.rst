@@ -36,9 +36,6 @@ In order to use the exporter, you will need to set the
 API
 Key <https://docs.newrelic.com/docs/insights/insights-data-sources/custom-data/introduction-event-api#>`__.
 
-Usage
------
-
 Using the span exporter
 -----------------------
 
