@@ -39,7 +39,8 @@ Key <https://docs.newrelic.com/docs/insights/insights-data-sources/custom-data/i
 Usage
 -----
 
-   Using the span exporter
+Using the span exporter
+-----------------------
 
 The following code sample assumes you have set the
 ``NEW_RELIC_INSERT_KEY`` environment variable and installed the
@@ -76,7 +77,8 @@ following packages:
 
 ..
 
-   Using the span exporter with auto-instrumentation:
+Using the span exporter with auto-instrumentation
+-------------------------------------------------
 
 The following code sample assumes you have set the
 ``NEW_RELIC_INSERT_KEY`` environment variable and installed the
