@@ -36,15 +36,6 @@ def span_exporter(hosts, insert_key):
     return exporter
 
 
-@pytest.fixture()
-def span_processor(span_exporter):
-    processor = BatchExportSpanProcessor(
-        span_exporter,
-        schedule_delay_millis=500,
-    )
-    return processor
-
-
 def to_timestamp(time):
     return int((time - datetime(1970, 1, 1)).total_seconds() * 1e9)
 
@@ -123,6 +114,10 @@ SPAN = MockSpan(**SPAN_DATA, parent=PARENT_SPAN.context)
 MISSING_DESC_SPAN_DATA = PARENT_SPAN_DATA.copy()
 MISSING_DESC_SPAN_DATA["status_description"] = None
 MISSING_DESC_SPAN = MockSpan(**MISSING_DESC_SPAN_DATA)
+
+STATUS_UNSET_SPAN_DATA = PARENT_SPAN_DATA.copy()
+STATUS_UNSET_SPAN_DATA["status_code"] = StatusCode.UNSET
+STATUS_UNSET_SPAN = MockSpan(**STATUS_UNSET_SPAN_DATA)
 
 
 def test_spans(http_responses, span_exporter, decompress_payload):
@@ -230,6 +225,28 @@ def test_send_spans_exception(span_exporter, caplog):
         logging.ERROR,
         "New Relic send_spans failed with an exception.",
     ) in caplog.record_tuples
+
+
+def test_exception_spans_status_unset(
+    http_responses, span_exporter, decompress_payload
+):
+    assert len(http_responses) == 0
+    exporter_status_code = span_exporter.export([STATUS_UNSET_SPAN])
+    assert exporter_status_code == SpanExportResult.SUCCESS
+    assert len(http_responses) == 1
+    response = http_responses.pop()
+
+    # Verify payload
+    data = json.loads(decompress_payload(response.request.body))
+    assert len(data) == 1
+    data = data[0]
+    spans = data["spans"]
+    assert len(spans) == 1
+    span = spans[0]
+    attributes = span["attributes"]
+
+    assert "otel.status_code" not in attributes
+    assert "otel.status_description" not in attributes
 
 
 @pytest.mark.http_response(status_code=500)
