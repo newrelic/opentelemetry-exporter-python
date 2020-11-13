@@ -1,0 +1,58 @@
+name: Deploy
+
+on:
+  release:
+    types:
+      - published
+
+
+jobs:
+  pypi:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+        architecture: x64
+    - name: Install Dependencies
+      run: |
+        pip install -U pip
+        pip install -U wheel setuptools twine
+    - name: Build and Upload Packages
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload --non-interactive dist/*
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
+  docs:
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+        architecture: x64
+    - name: Prepare git directory for docs build
+      run: |
+        git config --local user.name "github-actions[bot]"
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git fetch origin gh-pages && \
+        git worktree add --no-checkout -B gh-pages docs/_build origin/gh-pages
+    - name: Install Dependencies
+      run: |
+        pip install -U pip
+        pip install -U wheel setuptools tox
+    - name: Generate docs
+      run: tox -edocs
+    - name: Publish docs
+      run: |
+        git add --all
+        git commit --amend --no-edit --date=now
+        git push -f
+      working-directory: ./docs/_build
