@@ -48,6 +48,8 @@ class NewRelicSpanExporter(SpanExporter):
         else:
             parent_id = None
 
+        attributes["span.kind"] = span.kind.name.lower()
+
         if span.status.status_code is not StatusCode.UNSET:
             attributes.setdefault("otel.status_code", span.status.status_code.name)
             description = span.status.description

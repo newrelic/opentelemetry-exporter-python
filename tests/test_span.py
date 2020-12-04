@@ -152,6 +152,7 @@ def test_spans(http_responses, span_exporter, decompress_payload):
 
     assert attributes["duration.ms"] == duration
     assert attributes["name"] == SPAN.name
+    assert attributes["span.kind"] == "server"
     assert int(attributes["parent.id"], 16) == SPAN.parent.span_id
 
     assert attributes["otel.status_code"] == SPAN_DATA["status_code"].name
@@ -177,6 +178,7 @@ def test_exception_spans(http_responses, span_exporter, decompress_payload):
 
     assert int(span["id"], 16) == PARENT_SPAN_DATA["context"]["span_id"]
     assert attributes["name"] == PARENT_SPAN.name
+    assert attributes["span.kind"] == "server"
 
     for name, value in PARENT_SPAN.attributes.items():
         assert attributes[name] == value
@@ -250,8 +252,14 @@ def test_exception_spans_status_unset(
 
 
 @pytest.mark.http_response(status_code=500)
-def test_bad_http_response(span_exporter):
+def test_bad_http_response(span_exporter, caplog):
     span_exporter.export([SPAN])
+
+    assert (
+        "opentelemetry_ext_newrelic.span",
+        logging.ERROR,
+        "New Relic send_spans failed with status code: 500",
+    ) in caplog.record_tuples
 
 
 def test_default_exporter_values(insert_key):
