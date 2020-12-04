@@ -152,6 +152,7 @@ def test_spans(http_responses, span_exporter, decompress_payload):
 
     assert attributes["duration.ms"] == duration
     assert attributes["name"] == SPAN.name
+    assert attributes["span.kind"] == "server"
     assert int(attributes["parent.id"], 16) == SPAN.parent.span_id
 
     assert attributes["otel.status_code"] == SPAN_DATA["status_code"].name
@@ -177,6 +178,7 @@ def test_exception_spans(http_responses, span_exporter, decompress_payload):
 
     assert int(span["id"], 16) == PARENT_SPAN_DATA["context"]["span_id"]
     assert attributes["name"] == PARENT_SPAN.name
+    assert attributes["span.kind"] == "server"
 
     for name, value in PARENT_SPAN.attributes.items():
         assert attributes[name] == value
