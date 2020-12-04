@@ -250,8 +250,14 @@ def test_exception_spans_status_unset(
 
 
 @pytest.mark.http_response(status_code=500)
-def test_bad_http_response(span_exporter):
+def test_bad_http_response(span_exporter, caplog):
     span_exporter.export([SPAN])
+
+    assert (
+        "opentelemetry_ext_newrelic.span",
+        logging.ERROR,
+        "New Relic send_spans failed with status code: 500",
+    ) in caplog.record_tuples
 
 
 def test_default_exporter_values(insert_key):
