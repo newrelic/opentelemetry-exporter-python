@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quickstart &mdash; opentelemetry_ext_newrelic 0.1.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" />
+    <link rel="prev" title="New Relic OpenTelemetry Exporter" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> opentelemetry_ext_newrelic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-opentelemetry-ext-newrelic">Installing opentelemetry-ext-newrelic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-span-exporter">Using the span exporter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-span-exporter-with-auto-instrumentation">Using the span exporter with auto-instrumentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#find-and-use-data">Find and use data</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">opentelemetry_ext_newrelic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Quickstart</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/quickstart.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installing-opentelemetry-ext-newrelic">
+<h2>Installing opentelemetry-ext-newrelic<a class="headerlink" href="#installing-opentelemetry-ext-newrelic" title="Permalink to this headline">¶</a></h2>
+<p>To start, the <code class="docutils literal notranslate"><span class="pre">opentelemetry-ext-newrelic</span></code> package must be installed. To install
+through pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install opentelemetry-ext-newrelic
+</pre></div>
+</div>
+<p>If that fails, download the library from its GitHub page and install it using:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python setup.py install
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-the-span-exporter">
+<h2>Using the span exporter<a class="headerlink" href="#using-the-span-exporter" title="Permalink to this headline">¶</a></h2>
+<p>To start, the following packages must be installed.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">opentelemetry-ext-newrelic</span></code></p></li>
+</ul>
+<p>Additionally, the example code assumes you’ve set the following environment variables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NEW_RELIC_INSERT_KEY</span></code></p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">opentelemetry</span> <span class="kn">import</span> <span class="n">trace</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.resources</span> <span class="kn">import</span> <span class="n">Resource</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.trace.export</span> <span class="kn">import</span> <span class="n">BatchExportSpanProcessor</span>
+<span class="kn">from</span> <span class="nn">opentelemetry_ext_newrelic</span> <span class="kn">import</span> <span class="n">NewRelicSpanExporter</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.trace</span> <span class="kn">import</span> <span class="n">TracerProvider</span>
+
+<span class="n">trace</span><span class="o">.</span><span class="n">set_tracer_provider</span><span class="p">(</span>
+    <span class="n">TracerProvider</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="n">Resource</span><span class="o">.</span><span class="n">create</span><span class="p">({</span><span class="s2">&quot;service.name&quot;</span><span class="p">:</span> <span class="s2">&quot;otel-python&quot;</span><span class="p">}))</span>
+<span class="p">)</span>
+
+<span class="n">trace</span><span class="o">.</span><span class="n">get_tracer_provider</span><span class="p">()</span><span class="o">.</span><span class="n">add_span_processor</span><span class="p">(</span>
+    <span class="n">BatchExportSpanProcessor</span><span class="p">(</span>
+        <span class="n">NewRelicSpanExporter</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;NEW_RELIC_INSERT_KEY&quot;</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">schedule_delay_millis</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">tracer</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">get_tracer</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">tracer</span><span class="o">.</span><span class="n">start_as_current_span</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">tracer</span><span class="o">.</span><span class="n">start_as_current_span</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello World from OpenTelemetry Python!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-the-span-exporter-with-auto-instrumentation">
+<h2>Using the span exporter with auto-instrumentation<a class="headerlink" href="#using-the-span-exporter-with-auto-instrumentation" title="Permalink to this headline">¶</a></h2>
+<p>To start, the following packages must be installed.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">opentelemetry-ext-newrelic</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">opentelemetry-instrumentation-flask</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flask</span></code></p></li>
+</ul>
+<p>Additionally, the example code assumes you’ve set the following environment variables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NEW_RELIC_INSERT_KEY</span></code></p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">opentelemetry</span> <span class="kn">import</span> <span class="n">trace</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.instrumentation.flask</span> <span class="kn">import</span> <span class="n">FlaskInstrumentor</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.resources</span> <span class="kn">import</span> <span class="n">Resource</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.trace</span> <span class="kn">import</span> <span class="n">TracerProvider</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.trace.export</span> <span class="kn">import</span> <span class="n">BatchExportSpanProcessor</span>
+<span class="kn">from</span> <span class="nn">opentelemetry_ext_newrelic</span> <span class="kn">import</span> <span class="n">NewRelicSpanExporter</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">FlaskInstrumentor</span><span class="p">()</span><span class="o">.</span><span class="n">instrument_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">trace</span><span class="o">.</span><span class="n">set_tracer_provider</span><span class="p">(</span>
+    <span class="n">TracerProvider</span><span class="p">(</span><span class="n">resource</span><span class="o">=</span><span class="n">Resource</span><span class="o">.</span><span class="n">create</span><span class="p">({</span><span class="s2">&quot;service.name&quot;</span><span class="p">:</span> <span class="s2">&quot;otel-python-flask&quot;</span><span class="p">}))</span>
+<span class="p">)</span>
+
+<span class="n">trace</span><span class="o">.</span><span class="n">get_tracer_provider</span><span class="p">()</span><span class="o">.</span><span class="n">add_span_processor</span><span class="p">(</span>
+    <span class="n">BatchExportSpanProcessor</span><span class="p">(</span>
+        <span class="n">NewRelicSpanExporter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;NEW_RELIC_INSERT_KEY&quot;</span><span class="p">]),</span>
+        <span class="n">schedule_delay_millis</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello_world</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello World!&quot;</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/error&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">raise_500</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Something happened!&quot;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="find-and-use-data">
+<h2>Find and use data<a class="headerlink" href="#find-and-use-data" title="Permalink to this headline">¶</a></h2>
+<p>Tips on how to find and query your data in New Relic:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.newrelic.com/docs/understand-dependencies/distributed-tracing/trace-api/introduction-trace-api#view-data">Find trace/span data</a></p></li>
+</ul>
+<p>For general querying information, see:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.newrelic.com/docs/using-new-relic/data/understand-data/query-new-relic-data">Query New Relic data</a></p></li>
+<li><p><a class="reference external" href="https://docs.newrelic.com/docs/query-data/nrql-new-relic-query-language/getting-started/introduction-nrql">Intro to NRQL</a></p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="New Relic OpenTelemetry Exporter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, New Relic
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

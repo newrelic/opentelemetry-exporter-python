@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>opentelemetry_ext_newrelic.span &mdash; opentelemetry_ext_newrelic 0.1.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> opentelemetry_ext_newrelic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quickstart</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">opentelemetry_ext_newrelic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>opentelemetry_ext_newrelic.span</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for opentelemetry_ext_newrelic.span</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2020 New Relic, Inc.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">from</span> <span class="nn">newrelic_telemetry_sdk</span> <span class="kn">import</span> <span class="n">Span</span> <span class="k">as</span> <span class="n">NewRelicSpan</span>
+<span class="kn">from</span> <span class="nn">newrelic_telemetry_sdk</span> <span class="kn">import</span> <span class="n">SpanClient</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.sdk.trace.export</span> <span class="kn">import</span> <span class="n">Span</span><span class="p">,</span> <span class="n">SpanExporter</span><span class="p">,</span> <span class="n">SpanExportResult</span>
+<span class="kn">from</span> <span class="nn">opentelemetry.trace.status</span> <span class="kn">import</span> <span class="n">StatusCode</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">opentelemetry_exporter_python.version</span> <span class="kn">import</span> <span class="n">version</span> <span class="k">as</span> <span class="n">__version__</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>  <span class="c1"># pragma: no cover</span>
+
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NewRelicSpanExporter"><a class="viewcode-back" href="../../api.html#opentelemetry_ext_newrelic.span.NewRelicSpanExporter">[docs]</a><span class="k">class</span> <span class="nc">NewRelicSpanExporter</span><span class="p">(</span><span class="n">SpanExporter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">SpanClient</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">add_version_info</span><span class="p">(</span><span class="s2">&quot;NewRelic-OpenTelemetry-Exporter&quot;</span><span class="p">,</span> <span class="n">__version__</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="n">span</span><span class="p">):</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">span</span><span class="o">.</span><span class="n">resource</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">span</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">span</span><span class="o">.</span><span class="n">get_span_context</span><span class="p">()</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">span</span><span class="o">.</span><span class="n">start_time</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">span</span><span class="o">.</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span> <span class="o">//</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span> <span class="o">//</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span>
+        <span class="k">if</span> <span class="n">span</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+            <span class="n">parent_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:016x}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">span</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">span_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parent_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;span.kind&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">span</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">span</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">StatusCode</span><span class="o">.</span><span class="n">UNSET</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;otel.status_code&quot;</span><span class="p">,</span> <span class="n">span</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">status_code</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">span</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">description</span>
+            <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;otel.status_description&quot;</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">NewRelicSpan</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">span</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+            <span class="n">guid</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{:016x}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">span_id</span><span class="p">),</span>
+            <span class="n">trace_id</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{:032x}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">trace_id</span><span class="p">),</span>
+            <span class="n">parent_id</span><span class="o">=</span><span class="n">parent_id</span><span class="p">,</span>
+            <span class="n">start_time_ms</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+            <span class="n">duration_ms</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="NewRelicSpanExporter.export"><a class="viewcode-back" href="../../api.html#opentelemetry_ext_newrelic.span.NewRelicSpanExporter.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spans</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Span</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">SpanExportResult</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">spans</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">span</span><span class="p">)</span> <span class="k">for</span> <span class="n">span</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">]</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">send_batch</span><span class="p">(</span><span class="n">spans</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;New Relic send_spans failed with an exception.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">SpanExportResult</span><span class="o">.</span><span class="n">FAILURE</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;New Relic send_spans failed with status code: </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">SpanExportResult</span><span class="o">.</span><span class="n">FAILURE</span>
+
+        <span class="k">return</span> <span class="n">SpanExportResult</span><span class="o">.</span><span class="n">SUCCESS</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, New Relic
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
